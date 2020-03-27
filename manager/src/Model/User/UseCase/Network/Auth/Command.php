@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Model\User\UseCase\SignUp\Request;
+namespace App\Model\User\UseCase\Network\Auth;
 
 class Command
 {
     /**
      * @var string
      */
-    public $email;
+    public $network;
     /**
      * @var string
      */
-    public $password;
+    public $identity;
 }
