@@ -21,6 +21,14 @@ class Handler
     private $sender;
     private $flusher;
 
+    /**
+     * Handler constructor.
+     * @param UserRepository         $users
+     * @param PasswordHasher         $hasher
+     * @param SignUpConfirmTokenizer $tokenizer
+     * @param ConfirmTokenSender     $sender
+     * @param Flusher                $flusher
+     */
     public function __construct(
         UserRepository $users,
         PasswordHasher $hasher,
