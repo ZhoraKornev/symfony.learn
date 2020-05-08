@@ -21,21 +21,14 @@ class Handler
     private $sender;
     private $flusher;
 
-    /**
-     * Handler constructor.
-     * @param UserRepository         $users
-     * @param PasswordHasher         $hasher
-     * @param SignUpConfirmTokenizer $tokenizer
-     * @param ConfirmTokenSender     $sender
-     * @param Flusher                $flusher
-     */
     public function __construct(
         UserRepository $users,
         PasswordHasher $hasher,
         SignUpConfirmTokenizer $tokenizer,
         ConfirmTokenSender $sender,
         Flusher $flusher
-    ) {
+    )
+    {
         $this->users = $users;
         $this->hasher = $hasher;
         $this->tokenizer = $tokenizer;
@@ -51,15 +44,14 @@ class Handler
             throw new \DomainException('User already exists.');
         }
 
-        $user = new User(
+        $user = User::signUpByEmail(
             Id::next(),
-            new \DateTimeImmutable()
-        );
-        $user->signUpByEmail(
+            new \DateTimeImmutable(),
             $email,
             $this->hasher->hash($command->password),
             $token = $this->tokenizer->generate()
         );
+
         $this->users->add($user);
 
         $this->sender->send($email, $token);
