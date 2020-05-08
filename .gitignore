@@ -16,3 +16,7 @@ Homestead.yaml
 npm-debug.log
 yarn-error.log
 _ide_helper.php
+###> symfony/phpunit-bridge ###
+.phpunit
+/phpunit.xml
+###< symfony/phpunit-bridge ###
