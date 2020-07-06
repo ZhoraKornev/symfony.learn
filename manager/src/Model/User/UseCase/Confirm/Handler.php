@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Model\User\UseCase\Network\Auth;
+namespace App\Model\User\UseCase\Confirm;
 
 use App\Model\Flusher;
 use App\Model\User\Entity\User\Id;

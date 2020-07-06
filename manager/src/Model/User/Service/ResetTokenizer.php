@@ -17,6 +17,10 @@ class ResetTokenizer
         $this->interval = $interval;
     }
 
+    /**
+     * @return ResetToken
+     * @throws \Exception
+     */
     public function generate(): ResetToken
     {
         return new ResetToken(
