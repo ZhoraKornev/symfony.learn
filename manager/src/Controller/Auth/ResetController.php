@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Controller\Auth;
 
@@ -23,9 +23,8 @@ class ResetController extends AbstractController
 
     /**
      * @Route("/reset", name="auth.reset")
-     * @param Request               $request
+     * @param Request $request
      * @param Reset\Request\Handler $handler
-     *
      * @return Response
      */
     public function request(Request $request, Reset\Request\Handler $handler): Response
@@ -46,20 +45,17 @@ class ResetController extends AbstractController
             }
         }
 
-        return $this->render(
-            'app/auth/reset/request.html.twig', [
+        return $this->render('app/auth/reset/request.html.twig', [
             'form' => $form->createView(),
-        ]
-        );
+        ]);
     }
 
     /**
      * @Route("/reset/{token}", name="auth.reset.reset")
-     * @param string              $token
-     * @param Request             $request
+     * @param string $token
+     * @param Request $request
      * @param Reset\Reset\Handler $handler
-     * @param UserFetcher         $users
-     *
+     * @param UserFetcher $users
      * @return Response
      */
     public function reset(string $token, Request $request, Reset\Reset\Handler $handler, UserFetcher $users): Response
@@ -85,10 +81,8 @@ class ResetController extends AbstractController
             }
         }
 
-        return $this->render(
-            'app/auth/reset/reset.html.twig', [
+        return $this->render('app/auth/reset/reset.html.twig', [
             'form' => $form->createView(),
-        ]
-        );
+        ]);
     }
 }

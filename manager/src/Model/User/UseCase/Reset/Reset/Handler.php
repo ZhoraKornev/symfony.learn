@@ -7,7 +7,6 @@ namespace App\Model\User\UseCase\Reset\Reset;
 use App\Model\Flusher;
 use App\Model\User\Entity\User\UserRepository;
 use App\Model\User\Service\PasswordHasher;
-use DateTimeImmutable;
 
 class Handler
 {
@@ -29,7 +28,7 @@ class Handler
         }
 
         $user->passwordReset(
-            new DateTimeImmutable(),
+            new \DateTimeImmutable(),
             $this->hasher->hash($command->password)
         );
 

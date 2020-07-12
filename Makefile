@@ -5,6 +5,10 @@ test: manager-test
 docker-up:
 	docker-compose up -d
 
+migrations:
+	 docker-compose docker exec -it manager-php-cli bin/console doctrine:migration:migrate
+# $ docker-compose run --rm manager-php-cli php bin/console doctrine:migration:migrate
+
 docker-down:
 	docker-compose down --remove-orphans
 

@@ -149,17 +149,17 @@ class User
 
     public function isNew(): bool
     {
-        return $this->status === self::STATUS_NEW;
+         return $this->status === self::STATUS_NEW;
     }
 
     public function isWait(): bool
     {
-        return $this->status === self::STATUS_WAIT;
+         return $this->status === self::STATUS_WAIT;
     }
 
     public function isActive(): bool
     {
-        return $this->status === self::STATUS_ACTIVE;
+         return $this->status === self::STATUS_ACTIVE;
     }
 
     public function getId(): Id
