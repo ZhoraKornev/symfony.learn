@@ -5,6 +5,7 @@
 /public/bundles/
 /var/
 /vendor/
+/.ready
 ###< symfony/framework-bundle ###
 
 ###> symfony/phpunit-bridge ###
