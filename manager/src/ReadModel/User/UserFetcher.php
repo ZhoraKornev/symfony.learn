@@ -19,11 +19,11 @@ class UserFetcher
     public function existsByResetToken(string $token): bool
     {
         return $this->connection->createQueryBuilder()
-                ->select('COUNT (*)')
-                ->from('user_users')
-                ->where('reset_token_token = :token')
-                ->setParameter(':token', $token)
-                ->execute()->fetchColumn(0) > 0;
+            ->select('COUNT (*)')
+            ->from('user_users')
+            ->where('reset_token_token = :token')
+            ->setParameter(':token', $token)
+            ->execute()->fetchColumn(0) > 0;
     }
 
     public function findForAuthByEmail(string $email): ?AuthView
@@ -65,6 +65,26 @@ class UserFetcher
             ->execute();
 
         $stmt->setFetchMode(FetchMode::CUSTOM_OBJECT, AuthView::class);
+        $result = $stmt->fetch();
+
+        return $result ?: null;
+    }
+
+    public function findByEmail(string $email): ?ShortView
+    {
+        $stmt = $this->connection->createQueryBuilder()
+            ->select(
+                'id',
+                'email',
+                'role',
+                'status'
+            )
+            ->from('user_users')
+            ->where('email = :email')
+            ->setParameter(':email', $email)
+            ->execute();
+
+        $stmt->setFetchMode(FetchMode::CUSTOM_OBJECT, ShortView::class);
         $result = $stmt->fetch();
 
         return $result ?: null;
