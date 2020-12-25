@@ -17,7 +17,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class User
 {
-    private const STATUS_NEW = 'new';
     private const STATUS_WAIT = 'wait';
     public const STATUS_ACTIVE = 'active';
 
@@ -47,6 +46,21 @@ class User
      */
     private $confirmToken;
     /**
+     * @var Name
+     * @ORM\Embedded(class="Name")
+     */
+    private $name;
+    /**
+     * @var Email|null
+     * @ORM\Column(type="user_user_email", name="new_email", nullable=true)
+     */
+    private $newEmail;
+    /**
+     * @var string|null
+     * @ORM\Column(type="string", name="new_email_token", nullable=true)
+     */
+    private $newEmailToken;
+    /**
      * @var ResetToken|null
      * @ORM\Embedded(class="ResetToken", columnPrefix="reset_token_")
      */
@@ -67,17 +81,18 @@ class User
      */
     private $networks;
 
-    private function __construct(Id $id, \DateTimeImmutable $date)
+    private function __construct(Id $id, \DateTimeImmutable $date, Name $name)
     {
         $this->id = $id;
         $this->date = $date;
+        $this->name = $name;
         $this->role = Role::user();
         $this->networks = new ArrayCollection();
     }
 
-    public static function signUpByEmail(Id $id, \DateTimeImmutable $date, Email $email, string $hash, string $token): self
+    public static function signUpByEmail(Id $id, \DateTimeImmutable $date, Name $name, Email $email, string $hash, string $token): self
     {
-        $user = new self($id, $date);
+        $user = new self($id, $date, $name);
         $user->email = $email;
         $user->passwordHash = $hash;
         $user->confirmToken = $token;
@@ -95,15 +110,15 @@ class User
         $this->confirmToken = null;
     }
 
-    public static function signUpByNetwork(Id $id, \DateTimeImmutable $date, string $network, string $identity): self
+    public static function signUpByNetwork(Id $id, \DateTimeImmutable $date, Name $name, string $network, string $identity): self
     {
-        $user = new self($id, $date);
+        $user = new self($id, $date, $name);
         $user->attachNetwork($network, $identity);
         $user->status = self::STATUS_ACTIVE;
         return $user;
     }
 
-    private function attachNetwork(string $network, string $identity): void
+    public function attachNetwork(string $network, string $identity): void
     {
         foreach ($this->networks as $existing) {
             if ($existing->isForNetwork($network)) {
@@ -139,17 +154,42 @@ class User
         $this->resetToken = null;
     }
 
+    public function requestEmailChanging(Email $email, string $token): void
+    {
+        if (!$this->isActive()) {
+            throw new \DomainException('User is not active.');
+        }
+        if ($this->email && $this->email->isEqual($email)) {
+            throw new \DomainException('Email is already same.');
+        }
+        $this->newEmail = $email;
+        $this->newEmailToken = $token;
+    }
+
+    public function confirmEmailChanging(string $token): void
+    {
+        if (!$this->newEmailToken) {
+            throw new \DomainException('Changing is not requested.');
+        }
+        if ($this->newEmailToken !== $token) {
+            throw new \DomainException('Incorrect changing token.');
+        }
+        $this->email = $this->newEmail;
+        $this->newEmail = null;
+        $this->newEmailToken = null;
+    }
+
+    public function changeName(Name $name): void
+    {
+        $this->name = $name;
+    }
+
     public function changeRole(Role $role): void
     {
         if ($this->role->isEqual($role)) {
             throw new \DomainException('Role is already same.');
         }
         $this->role = $role;
-    }
-
-    public function isNew(): bool
-    {
-         return $this->status === self::STATUS_NEW;
     }
 
     public function isWait(): bool
@@ -185,6 +225,21 @@ class User
     public function getConfirmToken(): ?string
     {
         return $this->confirmToken;
+    }
+
+    public function getName(): Name
+    {
+        return $this->name;
+    }
+
+    public function getNewEmail(): ?Email
+    {
+        return $this->newEmail;
+    }
+
+    public function getNewEmailToken(): ?string
+    {
+        return $this->newEmailToken;
     }
 
     public function getResetToken(): ?ResetToken

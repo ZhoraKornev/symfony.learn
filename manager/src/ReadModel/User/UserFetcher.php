@@ -89,4 +89,68 @@ class UserFetcher
 
         return $result ?: null;
     }
+
+    public function findBySignUpConfirmToken(string $token): ?ShortView
+    {
+        $stmt = $this->connection->createQueryBuilder()
+            ->select(
+                'id',
+                'email',
+                'role',
+                'status'
+            )
+            ->from('user_users')
+            ->where('confirm_token = :token')
+            ->setParameter(':token', $token)
+            ->execute();
+
+        $stmt->setFetchMode(FetchMode::CUSTOM_OBJECT, ShortView::class);
+        $result = $stmt->fetch();
+
+        return $result ?: null;
+    }
+
+    public function findDetail(string $id): ?DetailView
+    {
+        $stmt = $this->connection->createQueryBuilder()
+            ->select(
+                'id',
+                'date',
+                'name_first first_name',
+                'name_last last_name',
+                'email',
+                'role',
+                'status'
+            )
+            ->from('user_users')
+            ->where('id = :id')
+            ->setParameter(':id', $id)
+            ->execute();
+
+        $stmt->setFetchMode(FetchMode::CUSTOM_OBJECT, DetailView::class);
+
+        /** @var DetailView $view */
+        $view = $stmt->fetch();
+
+        $stmt = $this->connection->createQueryBuilder()
+            ->select('network', 'identity')
+            ->from('user_user_networks')
+            ->where('user_id = :id')
+            ->setParameter(':id', $id)
+            ->execute();
+
+        $stmt->setFetchMode(FetchMode::CUSTOM_OBJECT, NetworkView::class);
+
+        $view->networks = $stmt->fetchAll();
+
+        return $view;
+    }
+
+    public function getDetail(string $id): DetailView
+    {
+        if (!$detail = $this->findDetail($id)) {
+            throw new \LogicException('User is not found');
+        }
+        return $detail;
+    }
 }
