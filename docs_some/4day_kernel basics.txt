@@ -1,0 +1,144 @@
+-Apache/Nginx
+GET
+SPOST
+$_FILES
+$_COOKIES
+$_SERVER
+index . php
+$kernel = new Kernel ();
+$request = new Request ($_GET, $_POST, $FILES, , $SERVER) ;
+sresponse = $kernel->handle(Srequest) ;
+echo $response->getContent ();
+class Kernel
+private Srouter
+function handle (Request $request) : Response
+Scontroller = $this-> router->parse ($request);
+$response = $controller ($request) ;
+return $response ;
+
+---------- MVC
+class SignupController
+{
+    function action(Request $request): Response
+    {
+        $form = new SignupForm($validator);
+        $form->load(Srequest);
+        if ($form->isSubmitted() and $form->isValid()) {
+            $user = new User(
+                $form->get('email')->getData();
+            $hasher->hash($form->get('password')->getData());
+            $em->persist($user);
+            $em->flush();
+            $mailer->send(...);
+            $this->addFlash('success', 'post.created_successfully');
+            return $this->redirectToRoute('home');
+        }
+        return $this->render(
+            'index',
+            [
+                $form => $form->createView()
+            ]
+        );
+    }
+}
+---- API
+class SignupDTO
+{
+    public $email;
+    public $password;
+}
+
+class Api\SignupController
+{
+    function action(Request $request): Response
+    {
+        $json = $request->getContent();
+        $dto = $serializer->deserialize($json, SignupDTO::class, 'json');
+        $violations = $validator->validate($dto);
+        if (count($violations) > 0) {
+            $repr = $serializer->serialize($violations, 'json');
+            return JsonResponse::fromJsonString($repr, 400);
+        }
+        $user = new User(
+            $dto->email,
+            $hasher - hash($dto->password)
+        );
+        $em->persist($user);
+        $em->flush();
+        $mailer->send(...);
+        return $this->json([], 201);
+    }
+}
+
+
+
+----CRM
+class CRM\Callback\CreatedController
+function action(Request $request): Response
+{
+    $json = $request - getContent();
+    $dto = $serializer->deserialize($json, SignupDTO::class, 'json');
+    $violations = $validator->validate($dto);
+    if (count($violations) > 0) {
+        $logger->error("Validation error", ['errors' => $violations]);
+        $repr = $serializer->serialize($violations, 'json');
+        return JsonResponse::fromJsonString($repr, 400);
+    }
+    $user = new User(
+        $dto->email,
+        $hasher->hash($dto->password));
+    $em->persist($user);
+    $em->flush();
+    $mailer->send(...);
+    return $this->json(['success' => true]);
+}
+
+======================
+PHP CLI
+$argv;
+$arcv;
+bin/console
+$input = new Input($argv);
+$app = new Console\Application();
+$output = new Output();
+$result = $app->run($input, $output);
+die($result);
+class Application
+private $router
+function handle(Input $input, Output $output): Response
+$command = $this->router->parse($input);
+$result = $command->execute($input, $output);
+return $result;
+
+
+=======
+class SignupCommand
+{
+    function execute(Input $input, Output $output): Response
+    {
+        $helper = $this->getHelper('question');
+        $dto = new SignupDTO();
+        $question = new Question('Email');
+        $dto->email = $helper->ask($input, $output, $question);
+        $question = new Question('Password');
+        $question->setHidden(true);
+        $question->setHiddenFallback(false);
+        $dto->password = $helper->ask($input, $output, $question);
+        $violations = $validator->validate($dto);
+        if (count($violations) > 0) {
+            foreach ($violations as $violation) {
+                $output->writeln('error', $violation->getMessage(), 'error');
+                return 1;
+            }
+        }
+        $user = new User(
+            $dto->email,
+            $hasher->hash($dto->password));
+        $em->persist($user);
+        $em->flush();
+        $mailer->send(...);
+    }
+}
+
+
+
