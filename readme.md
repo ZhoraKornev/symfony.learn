@@ -2,5 +2,9 @@
 ===
 https://elisdn.ru/project-manager
 Практический мастер класс по разработке проекта на Symfony
-Потому как доступ к коду и повествование автора сумбурны пока что проект на паузе.
 
+дефолтные креды = manager/src/DataFixtures/UserFixture.php
+
+admin@app.test
+
+password
