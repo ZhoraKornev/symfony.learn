@@ -1,0 +1,16 @@
+* Admin
+* Admin Access Control
+* Control/Users + CSRF
+* Param Converter
+* User Read Model Filter
+* KNP pagination
+=======================
+Roles:
+User
+Manager
+Auditor
+Admin
+if (Admin) {
+if (Admin || Manager || Auditor) {
+if (Admin || Auditor) {
+if (Admin || Manager) {
